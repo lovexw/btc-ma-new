@@ -19,7 +19,7 @@ const App = () => {
   );
 
   useEffect(() => {
-    fetch('/btc-price.json')
+    fetch('./btc-price.json')
       .then(response => response.json())
       .then(jsonData => {
         const processedData = jsonData.map(item => ({
