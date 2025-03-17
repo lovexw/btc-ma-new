@@ -27,11 +27,19 @@ def get_btc_price():
         current_date = datetime.now(tz).strftime('%Y-%m-%d')
         
         # 修改文件路径的获取方式
-        csv_path = 'public/btc-price.csv'  # 使用相对路径
-        df = pd.read_csv(csv_path)
+        csv_path = 'public/btc-price.csv'
+        
+        try:
+            df = pd.read_csv(csv_path)
+            # 确保 Date 列存在
+            if 'Date' not in df.columns:
+                df = pd.DataFrame(columns=['Date', 'Price'])
+        except:
+            # 如果文件不存在或损坏，创建新的 DataFrame
+            df = pd.DataFrame(columns=['Date', 'Price'])
         
         # 检查是否已存在该日期的数据
-        if current_date in df['Date'].values:
+        if 'Date' in df.columns and current_date in df['Date'].values:
             print(f"Data for {current_date} already exists")
             return
             
