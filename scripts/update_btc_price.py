@@ -43,6 +43,12 @@ def get_btc_price():
                 # 读取现有的 CSV 文件
                 existing_df = pd.read_csv(csv_path)
                 
+                # 重命名列以匹配代码中的格式
+                existing_df = existing_df.rename(columns={
+                    'date': 'Date',
+                    'btc price': 'Price'
+                })
+                
                 # 确保日期格式统一
                 existing_df['Date'] = pd.to_datetime(existing_df['Date']).dt.strftime('%Y-%m-%d')
             except FileNotFoundError:
@@ -66,6 +72,11 @@ def get_btc_price():
             df = df.sort_values('Date', ascending=False)  # 按日期降序排序
             
             # 保存更新后的数据
+            # 保存时重命名回原始列名
+            df = df.rename(columns={
+                'Date': 'date',
+                'Price': 'btc price'
+            })
             df.to_csv(csv_path, index=False, date_format='%Y-%m-%d')
             print(f"Successfully updated BTC price for {current_date}: ${price}")
             
