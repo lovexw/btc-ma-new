@@ -30,16 +30,16 @@ def get_btc_price():
         csv_path = 'public/btc-price.csv'
         
         try:
-            df = pd.read_csv(csv_path)
-            # 确保 Date 列存在
-            if 'Date' not in df.columns:
-                df = pd.DataFrame(columns=['Date', 'Price'])
-        except:
-            # 如果文件不存在或损坏，创建新的 DataFrame
-            df = pd.DataFrame(columns=['Date', 'Price'])
+            # 读取现有的 CSV 文件
+            existing_df = pd.read_csv(csv_path)
+            # 确保日期格式统一
+            existing_df['Date'] = pd.to_datetime(existing_df['Date']).dt.strftime('%Y-%m-%d')
+        except FileNotFoundError:
+            # 如果文件不存在，创建新的 DataFrame
+            existing_df = pd.DataFrame(columns=['Date', 'Price'])
         
         # 检查是否已存在该日期的数据
-        if 'Date' in df.columns and current_date in df['Date'].values:
+        if current_date in existing_df['Date'].values:
             print(f"Data for {current_date} already exists")
             return
             
@@ -50,12 +50,12 @@ def get_btc_price():
         })
         
         # 添加新数据并按日期排序
-        df = pd.concat([df, new_row], ignore_index=True)
+        df = pd.concat([existing_df, new_row], ignore_index=True)
         df['Date'] = pd.to_datetime(df['Date'])
-        df = df.sort_values('Date')
+        df = df.sort_values('Date', ascending=False)  # 按日期降序排序
         
         # 保存更新后的数据
-        df.to_csv(csv_path, index=False)
+        df.to_csv(csv_path, index=False, date_format='%Y-%m-%d')
         print(f"Successfully updated BTC price for {current_date}: ${price}")
         
     except requests.exceptions.RequestException as e:
