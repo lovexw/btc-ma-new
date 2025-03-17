@@ -26,12 +26,14 @@ def get_btc_price():
         tz = pytz.timezone('Asia/Shanghai')
         current_date = datetime.now(tz).strftime('%Y-%m-%d')
         
-        # 修改文件路径的获取方式
-        csv_path = 'public/btc-price.csv'
+        # 修改文件路径为相对路径
+        script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        csv_path = os.path.join(script_dir, 'public', 'btc-price.csv')
         
         try:
             # 读取现有的 CSV 文件
             existing_df = pd.read_csv(csv_path)
+            
             # 确保日期格式统一
             existing_df['Date'] = pd.to_datetime(existing_df['Date']).dt.strftime('%Y-%m-%d')
         except FileNotFoundError:
