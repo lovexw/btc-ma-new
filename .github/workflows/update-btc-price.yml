@@ -27,13 +27,12 @@ jobs:
       continue-on-error: true
       run: python scripts/update_btc_price.py
     
-    - name: Check API status
+    - name: Create Issue on Failure
       if: steps.update_btc.outcome == 'failure'
       run: |
         echo "API request failed"
         gh issue create --title "BTC Price Update Failed $(date '+%Y-%m-%d')" \
-                       --body "The BTC price update job failed. Please check the API status and logs." \
-                       --label "api-error"
+                       --body "The BTC price update job failed. Please check the API status and logs."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
