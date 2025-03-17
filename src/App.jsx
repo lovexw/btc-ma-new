@@ -19,13 +19,17 @@ const App = () => {
   );
 
   useEffect(() => {
-    fetch('./btc-price.json')
-      .then(response => response.json())
-      .then(jsonData => {
-        const processedData = jsonData.map(item => ({
-          date: item['\ufeffdate'],
-          price: parseFloat(item['btc price'])
-        })).reverse();
+    fetch('./btc-price.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const processedData = lines.slice(1).map(line => {
+          const [date, price] = line.split(',');
+          return {
+            date: date.trim(),
+            price: parseFloat(price.trim())
+          };
+        }).reverse();
         setData(processedData);
       });
   }, []);
