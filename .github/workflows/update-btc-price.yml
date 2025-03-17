@@ -1,0 +1,46 @@
+name: Update BTC Price
+
+on:
+  schedule:
+    - cron: '0 17 * * *'  # 每天北京时间凌晨 1 点运行（UTC 17:00）
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  update-price:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas requests pytz
+    
+    - name: Update BTC price
+      id: update_btc
+      continue-on-error: true
+      run: python scripts/update_btc_price.py
+    
+    - name: Check API status
+      if: steps.update_btc.outcome == 'failure'
+      run: |
+        echo "API request failed"
+        gh issue create --title "BTC Price Update Failed $(date '+%Y-%m-%d')" \
+                       --body "The BTC price update job failed. Please check the API status and logs." \
+                       --label "api-error"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Commit and push if changed
+      if: steps.update_btc.outcome == 'success'
+      run: |
+        git config --global user.name 'GitHub Actions Bot'
+        git config --global user.email 'actions@github.com'
+        git add public/btc-price.csv
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update BTC price data" && git push)
