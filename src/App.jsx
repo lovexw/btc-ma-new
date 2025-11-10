@@ -25,6 +25,15 @@ const MA_COLORS = {
   1400: '#B794F4'   // 紫色
 };
 
+const HAB_COLORS = {
+  primary: '#1A1A1A',
+  accent: '#FF9900',
+  background: '#FAFAFA',
+  text: '#222222',
+  border: '#E0E0E0',
+  white: '#FFFFFF'
+};
+
 const App = () => {
   const [data, setData] = useState([]);
   const [maVisible, setMaVisible] = useState(
@@ -98,13 +107,14 @@ const App = () => {
         data: prices,
         symbol: 'circle',
         symbolSize: 1,
-        smooth: true,
+        smooth: 0.2,
+        sampling: 'lttb',
         lineStyle: {
-          color: '#1890ff',
-          width: 3,
-          shadowColor: 'rgba(24, 144, 255, 0.4)',
-          shadowBlur: 10,
-          shadowOffsetY: 5
+          color: HAB_COLORS.accent,
+          width: 2.5,
+          shadowColor: 'rgba(255, 153, 0, 0.25)',
+          shadowBlur: 8,
+          shadowOffsetY: 3
         },
         areaStyle: {
           color: {
@@ -114,8 +124,8 @@ const App = () => {
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: 'rgba(24, 144, 255, 0.3)' },
-              { offset: 1, color: 'rgba(24, 144, 255, 0.05)' }
+              { offset: 0, color: 'rgba(255, 153, 0, 0.2)' },
+              { offset: 1, color: 'rgba(255, 153, 0, 0.02)' }
             ]
           }
         }
@@ -130,7 +140,8 @@ const App = () => {
           type: 'line',
           data: calculateMA(day),
           symbol: 'none',
-          smooth: true,
+          smooth: 0.15,
+          sampling: 'lttb',
           lineStyle: {
             color: MA_COLORS[day],
             width: 2
@@ -143,17 +154,23 @@ const App = () => {
     });
 
     return {
-      backgroundColor: '#ffffff',
+      backgroundColor: HAB_COLORS.white,
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'cross',
           crossStyle: {
-            color: '#999'
+            color: HAB_COLORS.accent,
+            opacity: 0.6
+          },
+          lineStyle: {
+            color: HAB_COLORS.accent,
+            type: 'dashed',
+            opacity: 0.5
           }
         },
-        backgroundColor: 'rgba(50, 50, 50, 0.95)',
-        borderColor: '#333',
+        backgroundColor: 'rgba(26, 26, 26, 0.95)',
+        borderColor: HAB_COLORS.border,
         borderWidth: 1,
         textStyle: {
           color: '#fff',
@@ -177,7 +194,7 @@ const App = () => {
         top: 10,
         textStyle: {
           fontSize: 12,
-          color: '#666'
+          color: HAB_COLORS.text
         }
       },
       grid: {
@@ -199,14 +216,22 @@ const App = () => {
           bottom: 30,
           start: dataZoomState.start,
           end: dataZoomState.end,
-          borderColor: '#ddd',
-          fillerColor: 'rgba(24, 144, 255, 0.15)',
+          borderColor: HAB_COLORS.border,
+          fillerColor: 'rgba(255, 153, 0, 0.12)',
           handleStyle: {
-            color: '#1890ff',
-            borderColor: '#1890ff'
+            color: HAB_COLORS.accent,
+            borderColor: HAB_COLORS.accent,
+            shadowColor: 'rgba(255, 153, 0, 0.3)',
+            shadowBlur: 4
           },
           textStyle: {
-            color: '#666'
+            color: HAB_COLORS.text
+          },
+          emphasis: {
+            handleStyle: {
+              shadowColor: 'rgba(255, 153, 0, 0.5)',
+              shadowBlur: 6
+            }
           }
         }
       ],
@@ -216,11 +241,11 @@ const App = () => {
         data: dates,
         axisLine: {
           lineStyle: {
-            color: '#ddd'
+            color: HAB_COLORS.border
           }
         },
         axisLabel: {
-          color: '#666',
+          color: HAB_COLORS.text,
           fontSize: 11
         },
         splitLine: {
@@ -231,22 +256,24 @@ const App = () => {
         type: 'value',
         name: '价格 (USD)',
         nameTextStyle: {
-          color: '#666',
-          fontSize: 12
+          color: HAB_COLORS.text,
+          fontSize: 12,
+          fontWeight: 600
         },
         axisLine: {
           show: false
         },
         axisLabel: {
-          color: '#666',
+          color: HAB_COLORS.text,
           fontSize: 11,
-          formatter: (value) => `$${(value / 1000).toFixed(0)}k`
+          formatter: (value) => `${(value / 1000).toFixed(0)}k`
         },
         splitLine: {
           show: true,
           lineStyle: {
-            color: '#f0f0f0',
-            type: 'dashed'
+            color: HAB_COLORS.border,
+            type: 'dashed',
+            opacity: 0.6
           }
         }
       },
@@ -278,20 +305,23 @@ const App = () => {
     if (!maValue || !currentPrice) {
       return (
         <Card 
-          elevation={3}
+          elevation={0}
           sx={{ 
             height: '100%',
-            background: `linear-gradient(135deg, ${MA_COLORS[day]}15 0%, ${MA_COLORS[day]}05 100%)`,
-            border: `2px solid ${MA_COLORS[day]}40`,
-            transition: 'all 0.3s ease',
+            bgcolor: HAB_COLORS.white,
+            border: `1px solid ${HAB_COLORS.border}`,
+            borderRadius: '12px',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
             '&:hover': {
-              transform: 'translateY(-4px)',
-              boxShadow: `0 8px 20px ${MA_COLORS[day]}30`
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12)',
+              borderColor: HAB_COLORS.accent
             }
           }}
         >
           <CardContent>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            <Typography variant="subtitle2" sx={{ color: HAB_COLORS.text }} gutterBottom>
               加载中...
             </Typography>
           </CardContent>
@@ -304,26 +334,30 @@ const App = () => {
 
     return (
       <Card 
-        elevation={3}
+        elevation={0}
         sx={{ 
           height: '100%',
-          background: `linear-gradient(135deg, ${MA_COLORS[day]}15 0%, ${MA_COLORS[day]}05 100%)`,
-          border: `2px solid ${MA_COLORS[day]}40`,
-          transition: 'all 0.3s ease',
+          bgcolor: HAB_COLORS.white,
+          border: `1px solid ${HAB_COLORS.border}`,
+          borderLeft: `4px solid ${MA_COLORS[day]}`,
+          borderRadius: '12px',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
           '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: `0 8px 20px ${MA_COLORS[day]}30`
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12)',
+            borderLeftWidth: '5px'
           }
         }}
       >
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
             <Typography 
               variant="h6" 
               sx={{ 
                 fontWeight: 700,
-                color: MA_COLORS[day],
-                fontSize: '1.1rem'
+                color: HAB_COLORS.primary,
+                fontSize: '1rem'
               }}
             >
               MA{day}
@@ -334,10 +368,11 @@ const App = () => {
                 label={`${change >= 0 ? '+' : ''}${change}%`}
                 size="small"
                 sx={{
-                  backgroundColor: change >= 0 ? '#e8f5e9' : '#ffebee',
+                  backgroundColor: change >= 0 ? 'rgba(46, 125, 50, 0.08)' : 'rgba(198, 40, 40, 0.08)',
                   color: change >= 0 ? '#2e7d32' : '#c62828',
                   fontWeight: 600,
-                  fontSize: '0.7rem'
+                  fontSize: '0.7rem',
+                  border: `1px solid ${change >= 0 ? 'rgba(46, 125, 50, 0.2)' : 'rgba(198, 40, 40, 0.2)'}`
                 }}
               />
             )}
@@ -348,13 +383,13 @@ const App = () => {
             sx={{ 
               fontWeight: 700,
               mb: 1.5,
-              color: '#333'
+              color: HAB_COLORS.primary
             }}
           >
             ${maValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </Typography>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
             <Typography 
               variant="caption" 
               sx={{ 
@@ -365,13 +400,13 @@ const App = () => {
             >
               {isAbove ? '↑' : '↓'} {Math.abs(parseFloat(percentDiff))}%
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: HAB_COLORS.text, opacity: 0.7 }}>
               vs 当前价格
             </Typography>
           </Box>
 
-          <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #eee' }}>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+          <Box sx={{ mt: 1.5, pt: 1.5, borderTop: `1px solid ${HAB_COLORS.border}` }}>
+            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: HAB_COLORS.text, opacity: 0.8 }}>
               {isAbove ? '价格在均线上方' : '价格在均线下方'}
             </Typography>
           </Box>
@@ -382,44 +417,59 @@ const App = () => {
 
   return (
     <Box sx={{ 
-      p: 4, 
-      bgcolor: '#f5f7fa',
+      p: { xs: 2, sm: 3, md: 4 }, 
+      bgcolor: HAB_COLORS.background,
       minHeight: '100vh'
     }}>
       <Box sx={{ 
         maxWidth: '1600px', 
         mx: 'auto',
-        bgcolor: 'white',
-        borderRadius: 3,
-        p: 4,
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+        bgcolor: HAB_COLORS.white,
+        borderRadius: '16px',
+        p: { xs: 3, sm: 4, md: 5 },
+        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+        border: `1px solid ${HAB_COLORS.border}`
       }}>
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Box sx={{ textAlign: 'center', mb: 5 }}>
           <Typography 
             variant="h3" 
             sx={{ 
               fontWeight: 800,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 1
+              color: HAB_COLORS.primary,
+              mb: 1.5,
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
             }}
           >
             比特币价格走势分析
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              color: HAB_COLORS.text,
+              opacity: 0.7,
+              fontSize: { xs: '0.9rem', sm: '1rem' }
+            }}
+          >
             实时追踪比特币价格趋势与多周期均线指标
           </Typography>
         </Box>
 
         <Box sx={{ 
-          mb: 3, 
-          p: 2, 
-          bgcolor: '#fafafa', 
-          borderRadius: 2,
-          border: '1px solid #e0e0e0'
+          mb: 4, 
+          p: 3, 
+          bgcolor: HAB_COLORS.background, 
+          borderRadius: '12px',
+          border: `1px solid ${HAB_COLORS.border}`
         }}>
-          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5, fontWeight: 600 }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              mb: 2, 
+              fontWeight: 700,
+              color: HAB_COLORS.primary,
+              fontSize: '0.95rem'
+            }}
+          >
             均线显示设置
           </Typography>
           <FormGroup row sx={{ justifyContent: 'center', gap: 1 }}>
@@ -434,22 +484,35 @@ const App = () => {
                       color: MA_COLORS[day], 
                       '&.Mui-checked': { 
                         color: MA_COLORS[day]
-                      } 
+                      },
+                      '&:hover': {
+                        bgcolor: `${MA_COLORS[day]}15`
+                      }
                     }}
                   />
                 }
                 label={
-                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 500 }}>
+                  <Typography sx={{ 
+                    fontSize: '0.85rem', 
+                    fontWeight: 500,
+                    color: HAB_COLORS.text
+                  }}>
                     {day}日均线
                   </Typography>
                 }
                 sx={{
-                  bgcolor: maVisible[day] ? `${MA_COLORS[day]}10` : 'transparent',
+                  bgcolor: maVisible[day] ? HAB_COLORS.white : 'transparent',
                   px: 1.5,
                   py: 0.5,
-                  borderRadius: 1,
-                  border: `1px solid ${MA_COLORS[day]}40`,
-                  m: 0.5
+                  borderRadius: '8px',
+                  border: `2px solid ${maVisible[day] ? MA_COLORS[day] : HAB_COLORS.border}`,
+                  m: 0.5,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: MA_COLORS[day],
+                    transform: 'translateY(-1px)',
+                    boxShadow: `0 2px 8px ${MA_COLORS[day]}20`
+                  }
                 }}
               />
             ))}
@@ -457,12 +520,13 @@ const App = () => {
         </Box>
 
         <Paper 
-          elevation={2}
+          elevation={0}
           sx={{ 
-            mb: 4,
-            borderRadius: 2,
+            mb: 5,
+            borderRadius: '12px',
             overflow: 'hidden',
-            border: '1px solid #e0e0e0'
+            border: `1px solid ${HAB_COLORS.border}`,
+            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)'
           }}
         >
           <ReactECharts 
@@ -476,19 +540,20 @@ const App = () => {
           />
         </Paper>
 
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 3 }}>
           <Typography 
             variant="h5" 
             sx={{ 
               fontWeight: 700,
-              mb: 3,
+              mb: 4,
               textAlign: 'center',
-              color: '#333'
+              color: HAB_COLORS.primary,
+              fontSize: { xs: '1.3rem', sm: '1.5rem' }
             }}
           >
             均线指标监控面板
           </Typography>
-          <Grid container spacing={3}>
+          <Grid container spacing={2.5}>
             {MA_DAYS.map(day => (
               <Grid item xs={12} sm={6} md={4} lg={2} key={day}>
                 {renderMACard(day)}
@@ -499,39 +564,115 @@ const App = () => {
 
         {data.length > 0 && (
           <Box sx={{ 
-            mt: 4, 
-            p: 3, 
-            bgcolor: '#f9fafb', 
-            borderRadius: 2,
-            border: '1px solid #e5e7eb'
+            mt: 5, 
+            p: 4, 
+            bgcolor: HAB_COLORS.background, 
+            borderRadius: '12px',
+            border: `1px solid ${HAB_COLORS.border}`,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
           }}>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                <Box sx={{ 
+                  textAlign: 'center',
+                  p: 2,
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    bgcolor: HAB_COLORS.white,
+                    transform: 'translateY(-2px)'
+                  }
+                }}>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      fontSize: '0.8rem',
+                      color: HAB_COLORS.text,
+                      opacity: 0.7,
+                      fontWeight: 500
+                    }}
+                  >
                     当前价格
                   </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#1890ff', mt: 0.5 }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      color: HAB_COLORS.accent, 
+                      mt: 1,
+                      fontSize: { xs: '1.8rem', sm: '2rem' }
+                    }}
+                  >
                     ${getCurrentPrice()?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                <Box sx={{ 
+                  textAlign: 'center',
+                  p: 2,
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    bgcolor: HAB_COLORS.white,
+                    transform: 'translateY(-2px)'
+                  }
+                }}>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      fontSize: '0.8rem',
+                      color: HAB_COLORS.text,
+                      opacity: 0.7,
+                      fontWeight: 500
+                    }}
+                  >
                     数据点数
                   </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#52c41a', mt: 0.5 }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      color: HAB_COLORS.primary, 
+                      mt: 1,
+                      fontSize: { xs: '1.8rem', sm: '2rem' }
+                    }}
+                  >
                     {data.length.toLocaleString()}
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                <Box sx={{ 
+                  textAlign: 'center',
+                  p: 2,
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    bgcolor: HAB_COLORS.white,
+                    transform: 'translateY(-2px)'
+                  }
+                }}>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      fontSize: '0.8rem',
+                      color: HAB_COLORS.text,
+                      opacity: 0.7,
+                      fontWeight: 500
+                    }}
+                  >
                     最新日期
                   </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: '#722ed1', mt: 0.5, fontSize: '1.5rem' }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      color: HAB_COLORS.primary, 
+                      mt: 1, 
+                      fontSize: { xs: '1.3rem', sm: '1.5rem' }
+                    }}
+                  >
                     {data[data.length - 1].date}
                   </Typography>
                 </Box>
