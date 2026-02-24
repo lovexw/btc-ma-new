@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const MA_DAYS = [50, 200, 350, 700, 1000, 1400];
 const MA_COLORS = {
@@ -92,6 +93,48 @@ const App = () => {
     if (isNaN(current) || isNaN(previous)) return null;
     const change = ((current - previous) / previous * 100).toFixed(2);
     return parseFloat(change);
+  };
+
+  const getYearlyInvestmentReturns = () => {
+    if (data.length === 0) return [];
+    
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentPrice = getCurrentPrice();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    const results = [];
+    
+    for (let year = 2017; year < currentYear; year++) {
+      let targetDate = `${year}-${month}-${day}`;
+      let priceData = data.find(item => item.date === targetDate);
+      
+      if (!priceData) {
+        for (let d = 1; d <= 3; d++) {
+          const prevDay = new Date(year, parseInt(month) - 1, parseInt(day) - d);
+          const prevMonth = String(prevDay.getMonth() + 1).padStart(2, '0');
+          const prevDayStr = String(prevDay.getDate()).padStart(2, '0');
+          targetDate = `${prevDay.getFullYear()}-${prevMonth}-${prevDayStr}`;
+          priceData = data.find(item => item.date === targetDate);
+          if (priceData) break;
+        }
+      }
+      
+      if (priceData && currentPrice) {
+        const returnRate = ((currentPrice - priceData.price) / priceData.price * 100);
+        results.push({
+          year,
+          date: targetDate,
+          buyPrice: priceData.price,
+          currentPrice,
+          returnRate,
+          isPositive: returnRate >= 0
+        });
+      }
+    }
+    
+    return results.reverse();
   };
 
   const [dataZoomState, setDataZoomState] = useState({ start: 0, end: 100 });
@@ -557,6 +600,143 @@ const App = () => {
             {MA_DAYS.map(day => (
               <Grid item xs={12} sm={6} md={4} lg={2} key={day}>
                 {renderMACard(day)}
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            mb: 3,
+            gap: 1.5
+          }}>
+            <CalendarTodayIcon sx={{ color: HAB_COLORS.accent, fontSize: '1.5rem' }} />
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700,
+                textAlign: 'center',
+                color: HAB_COLORS.primary,
+                fontSize: { xs: '1.3rem', sm: '1.5rem' }
+              }}
+            >
+              历年投资回报
+            </Typography>
+          </Box>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              textAlign: 'center', 
+              color: HAB_COLORS.text, 
+              opacity: 0.6,
+              mb: 3,
+              fontSize: '0.85rem'
+            }}
+          >
+            假设从2017年起，每年今日投资比特币的收益情况
+          </Typography>
+          <Grid container spacing={2}>
+            {getYearlyInvestmentReturns().map((item) => (
+              <Grid item xs={6} sm={4} md={3} lg={2} key={item.year}>
+                <Card 
+                  elevation={0}
+                  sx={{ 
+                    height: '100%',
+                    bgcolor: HAB_COLORS.white,
+                    border: `1px solid ${HAB_COLORS.border}`,
+                    borderLeft: `4px solid ${item.isPositive ? '#2e7d32' : '#c62828'}`,
+                    borderRadius: '12px',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12)',
+                      borderLeftWidth: '5px'
+                    }
+                  }}
+                >
+                  <CardContent sx={{ p: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          fontWeight: 700,
+                          color: HAB_COLORS.primary,
+                          fontSize: '1.1rem'
+                        }}
+                      >
+                        {item.year}
+                      </Typography>
+                      <Chip
+                        icon={item.isPositive ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                        label={`${item.isPositive ? '+' : ''}${item.returnRate.toFixed(1)}%`}
+                        size="small"
+                        sx={{
+                          backgroundColor: item.isPositive ? 'rgba(46, 125, 50, 0.08)' : 'rgba(198, 40, 40, 0.08)',
+                          color: item.isPositive ? '#2e7d32' : '#c62828',
+                          fontWeight: 600,
+                          fontSize: '0.7rem',
+                          border: `1px solid ${item.isPositive ? 'rgba(46, 125, 50, 0.2)' : 'rgba(198, 40, 40, 0.2)'}`
+                        }}
+                      />
+                    </Box>
+                    
+                    <Box sx={{ mb: 1.5 }}>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: HAB_COLORS.text, 
+                          opacity: 0.6,
+                          fontSize: '0.7rem'
+                        }}
+                      >
+                        买入价格
+                      </Typography>
+                      <Typography 
+                        variant="body1" 
+                        sx={{ 
+                          fontWeight: 600,
+                          color: HAB_COLORS.text,
+                          fontSize: '0.95rem'
+                        }}
+                      >
+                        ${item.buyPrice.toLocaleString()}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ 
+                      pt: 1.5, 
+                      borderTop: `1px solid ${HAB_COLORS.border}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5
+                    }}>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          fontSize: '0.7rem', 
+                          color: item.isPositive ? '#2e7d32' : '#c62828',
+                          fontWeight: 600
+                        }}
+                      >
+                        {item.isPositive ? '盈利' : '亏损'}
+                      </Typography>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          fontSize: '0.65rem', 
+                          color: HAB_COLORS.text, 
+                          opacity: 0.5 
+                        }}
+                      >
+                        ${Math.abs(item.currentPrice - item.buyPrice).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>

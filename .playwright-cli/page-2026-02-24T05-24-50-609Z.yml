@@ -1,0 +1,235 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "比特币价格走势分析" [level=3] [ref=e6]
+      - heading "实时追踪比特币价格趋势与多周期均线指标" [level=6] [ref=e7]
+    - generic [ref=e8]:
+      - heading "均线显示设置" [level=6] [ref=e9]
+      - generic [ref=e10]:
+        - generic [ref=e11] [cursor=pointer]:
+          - generic [ref=e12]:
+            - checkbox "50日均线" [checked] [ref=e13]
+            - img [ref=e14]
+          - paragraph [ref=e16]: 50日均线
+        - generic [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]:
+            - checkbox "200日均线" [checked] [ref=e19]
+            - img [ref=e20]
+          - paragraph [ref=e22]: 200日均线
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e24]:
+            - checkbox "350日均线" [checked] [ref=e25]
+            - img [ref=e26]
+          - paragraph [ref=e28]: 350日均线
+        - generic [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]:
+            - checkbox "700日均线" [checked] [ref=e31]
+            - img [ref=e32]
+          - paragraph [ref=e34]: 700日均线
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]:
+            - checkbox "1000日均线" [checked] [ref=e37]
+            - img [ref=e38]
+          - paragraph [ref=e40]: 1000日均线
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]:
+            - checkbox "1400日均线" [checked] [ref=e43]
+            - img [ref=e44]
+          - paragraph [ref=e46]: 1400日均线
+    - generic [ref=e51]:
+      - heading "均线指标监控面板" [level=5] [ref=e52]
+      - generic [ref=e53]:
+        - generic [ref=e56]:
+          - generic [ref=e86]:
+            - heading "MA50" [level=6] [ref=e87]
+            - generic [ref=e88]:
+              - img [ref=e89]
+              - generic [ref=e91]: "-0.65%"
+          - heading "$80,842.86" [level=5] [ref=e92]
+          - generic [ref=e93]:
+            - generic [ref=e94]: ↓ 19.91%
+            - generic [ref=e95]: vs 当前价格
+          - generic [ref=e96]: 价格在均线下方
+        - generic [ref=e60]:
+          - generic [ref=e97]:
+            - heading "MA200" [level=6] [ref=e98]
+            - generic [ref=e99]:
+              - img [ref=e100]
+              - generic [ref=e102]: "-0.26%"
+          - heading "$98,674.09" [level=5] [ref=e103]
+          - generic [ref=e104]:
+            - generic [ref=e105]: ↓ 34.38%
+            - generic [ref=e106]: vs 当前价格
+          - generic [ref=e107]: 价格在均线下方
+        - generic [ref=e64]:
+          - generic [ref=e108]:
+            - heading "MA350" [level=6] [ref=e109]
+            - generic [ref=e110]:
+              - img [ref=e111]
+              - generic [ref=e113]: "-0.04%"
+          - heading "$99,561.32" [level=5] [ref=e114]
+          - generic [ref=e115]:
+            - generic [ref=e116]: ↓ 34.96%
+            - generic [ref=e117]: vs 当前价格
+          - generic [ref=e118]: 价格在均线下方
+        - generic [ref=e68]:
+          - generic [ref=e119]:
+            - heading "MA700" [level=6] [ref=e120]
+            - generic [ref=e121]:
+              - img [ref=e122]
+              - generic [ref=e124]: "-0.01%"
+          - heading "$87,389.13" [level=5] [ref=e125]
+          - generic [ref=e126]:
+            - generic [ref=e127]: ↓ 25.91%
+            - generic [ref=e128]: vs 当前价格
+          - generic [ref=e129]: 价格在均线下方
+        - generic [ref=e72]:
+          - generic [ref=e130]:
+            - heading "MA1000" [level=6] [ref=e131]
+            - generic [ref=e132]:
+              - img [ref=e133]
+              - generic [ref=e135]: +0.05%
+          - heading "$72,411.46" [level=5] [ref=e136]
+          - generic [ref=e137]:
+            - generic [ref=e138]: ↓ 10.58%
+            - generic [ref=e139]: vs 当前价格
+          - generic [ref=e140]: 价格在均线下方
+        - generic [ref=e76]:
+          - generic [ref=e141]:
+            - heading "MA1400" [level=6] [ref=e142]
+            - generic [ref=e143]:
+              - img [ref=e144]
+              - generic [ref=e146]: +0.03%
+          - heading "$58,351.15" [level=5] [ref=e147]
+          - generic [ref=e148]:
+            - generic [ref=e149]: ↑ 10.97%
+            - generic [ref=e150]: vs 当前价格
+          - generic [ref=e151]: 价格在均线上方
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - img [ref=e80]
+        - heading "历年投资回报" [level=5] [ref=e82]
+      - paragraph [ref=e83]: 假设从2017年起，每年今日投资比特币的收益情况
+      - generic [ref=e152]:
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - heading "2025" [level=6] [ref=e157]
+            - generic [ref=e158]:
+              - img [ref=e159]
+              - generic [ref=e161]: "-32.8%"
+          - generic [ref=e162]:
+            - text: 买入价格
+            - paragraph [ref=e163]: $96,327
+          - generic [ref=e164]:
+            - generic [ref=e165]: 亏损
+            - generic [ref=e166]: $31,577
+        - generic [ref=e169]:
+          - generic [ref=e170]:
+            - heading "2024" [level=6] [ref=e171]
+            - generic [ref=e172]:
+              - img [ref=e173]
+              - generic [ref=e175]: +27.4%
+          - generic [ref=e176]:
+            - text: 买入价格
+            - paragraph [ref=e177]: $50,841
+          - generic [ref=e178]:
+            - generic [ref=e179]: 盈利
+            - generic [ref=e180]: $13,909
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - heading "2023" [level=6] [ref=e185]
+            - generic [ref=e186]:
+              - img [ref=e187]
+              - generic [ref=e189]: +170.3%
+          - generic [ref=e190]:
+            - text: 买入价格
+            - paragraph [ref=e191]: $23,951
+          - generic [ref=e192]:
+            - generic [ref=e193]: 盈利
+            - generic [ref=e194]: $40,799
+        - generic [ref=e197]:
+          - generic [ref=e198]:
+            - heading "2022" [level=6] [ref=e199]
+            - generic [ref=e200]:
+              - img [ref=e201]
+              - generic [ref=e203]: +73.3%
+          - generic [ref=e204]:
+            - text: 买入价格
+            - paragraph [ref=e205]: $37,372
+          - generic [ref=e206]:
+            - generic [ref=e207]: 盈利
+            - generic [ref=e208]: $27,378
+        - generic [ref=e211]:
+          - generic [ref=e212]:
+            - heading "2021" [level=6] [ref=e213]
+            - generic [ref=e214]:
+              - img [ref=e215]
+              - generic [ref=e217]: +33.0%
+          - generic [ref=e218]:
+            - text: 买入价格
+            - paragraph [ref=e219]: $48,692
+          - generic [ref=e220]:
+            - generic [ref=e221]: 盈利
+            - generic [ref=e222]: $16,058
+        - generic [ref=e225]:
+          - generic [ref=e226]:
+            - heading "2020" [level=6] [ref=e227]
+            - generic [ref=e228]:
+              - img [ref=e229]
+              - generic [ref=e231]: +551.0%
+          - generic [ref=e232]:
+            - text: 买入价格
+            - paragraph [ref=e233]: $9,947
+          - generic [ref=e234]:
+            - generic [ref=e235]: 盈利
+            - generic [ref=e236]: $54,803
+        - generic [ref=e239]:
+          - generic [ref=e240]:
+            - heading "2019" [level=6] [ref=e241]
+            - generic [ref=e242]:
+              - img [ref=e243]
+              - generic [ref=e245]: +1473.5%
+          - generic [ref=e246]:
+            - text: 买入价格
+            - paragraph [ref=e247]: $4,115
+          - generic [ref=e248]:
+            - generic [ref=e249]: 盈利
+            - generic [ref=e250]: $60,635
+        - generic [ref=e253]:
+          - generic [ref=e254]:
+            - heading "2018" [level=6] [ref=e255]
+            - generic [ref=e256]:
+              - img [ref=e257]
+              - generic [ref=e259]: +528.5%
+          - generic [ref=e260]:
+            - text: 买入价格
+            - paragraph [ref=e261]: $10,302
+          - generic [ref=e262]:
+            - generic [ref=e263]: 盈利
+            - generic [ref=e264]: $54,448
+        - generic [ref=e267]:
+          - generic [ref=e268]:
+            - heading "2017" [level=6] [ref=e269]
+            - generic [ref=e270]:
+              - img [ref=e271]
+              - generic [ref=e273]: +5382.6%
+          - generic [ref=e274]:
+            - text: 买入价格
+            - paragraph [ref=e275]: $1,181
+          - generic [ref=e276]:
+            - generic [ref=e277]: 盈利
+            - generic [ref=e278]: $63,569
+    - generic [ref=e280]:
+      - generic [ref=e282]:
+        - text: 当前价格
+        - heading "$64,750.00" [level=4] [ref=e283]
+      - generic [ref=e285]:
+        - text: 数据点数
+        - heading "4,686" [level=4] [ref=e286]
+      - generic [ref=e288]:
+        - text: 最新日期
+        - heading "2026-02-24" [level=4] [ref=e289]
+  - generic [ref=e84]:
+    - text: 作者：
+    - link "小吴乐意" [ref=e85] [cursor=pointer]:
+      - /url: https://www.xiaowuleyi.com
