@@ -16,14 +16,15 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-const MA_DAYS = [50, 200, 350, 700, 1000, 1400];
+const MA_DAYS = [50, 200, 350, 700, 1000, 1400, 2411];
 const MA_COLORS = {
   50: '#FF6B6B',    // 红色
   200: '#4ECDC4',   // 青色
   350: '#45B7D1',   // 蓝色
   700: '#FFA07A',   // 橙红色
   1000: '#98D8C8',  // 薄荷绿
-  1400: '#B794F4'   // 紫色
+  1400: '#B794F4',  // 紫色
+  2411: '#FF69B4'   // 粉红色
 };
 
 const HAB_COLORS = {
