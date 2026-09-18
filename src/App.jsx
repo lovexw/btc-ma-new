@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Skeleton from '@mui/material/Skeleton';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 
@@ -14,11 +16,13 @@ import { useBtcData } from './hooks/useBtcData';
 import {
   MA_DAYS,
   MA_COLORS,
+  PRICE_BAND_STEP,
   buildPriceMap,
   computeMovingAverages,
   getDailyChange,
   getLatestValue,
-  getYearlyInvestmentReturns
+  getYearlyInvestmentReturns,
+  getPriceBandStats
 } from './lib/btc';
 
 import Hero from './components/Hero';
@@ -26,6 +30,7 @@ import MaToggles from './components/MaToggles';
 import PriceChart from './components/PriceChart';
 import MaCard from './components/MaCard';
 import YearlyReturnCard from './components/YearlyReturnCard';
+import PriceBandChart from './components/PriceBandChart';
 import Footer from './components/Footer';
 
 function Section({ title, subtitle, action, children }) {
@@ -56,10 +61,16 @@ function Section({ title, subtitle, action, children }) {
 const App = () => {
   const { data, loading, error, retry } = useBtcData();
   const [maVisible, setMaVisible] = useState(() => Object.fromEntries(MA_DAYS.map((day) => [day, true])));
+  const [bandMode, setBandMode] = useState('bar');
 
   const mas = useMemo(() => (data.length ? computeMovingAverages(data) : null), [data]);
   const priceMap = useMemo(() => buildPriceMap(data), [data]);
   const yearlyReturns = useMemo(() => getYearlyInvestmentReturns(data, priceMap), [data, priceMap]);
+  // 只统计 1 万美元以上区间，占比基于纳入统计的天数计算
+  const priceBandStats = useMemo(
+    () => getPriceBandStats(data, PRICE_BAND_STEP, { minPrice: PRICE_BAND_STEP }),
+    [data]
+  );
 
   const currentPrice = data.length ? data[data.length - 1].price : null;
 
@@ -69,6 +80,10 @@ const App = () => {
 
   const handleShowAll = useCallback(() => {
     setMaVisible(Object.fromEntries(MA_DAYS.map((day) => [day, true])));
+  }, []);
+
+  const handleBandMode = useCallback((_, value) => {
+    if (value) setBandMode(value);
   }, []);
 
   return (
@@ -131,7 +146,7 @@ const App = () => {
                 </Box>
               </Section>
 
-              <Section title="历年定投回测" subtitle={`假设自 2017 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）`}>
+              <Section title="历年定投回测" subtitle={`假设自 2016 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）`}>
                 <Box
                   sx={{
                     display: 'grid',
@@ -140,11 +155,53 @@ const App = () => {
                   }}
                 >
                   {loading && data.length === 0
-                    ? Array.from({ length: 9 }).map((_, i) => (
+                    ? Array.from({ length: 10 }).map((_, i) => (
                         <Skeleton key={i} variant="rounded" height={104} sx={{ borderRadius: 3 }} />
                       ))
                     : yearlyReturns.map((item) => <YearlyReturnCard key={item.year} item={item} />)}
                 </Box>
+              </Section>
+
+              <Section
+                title="价格区间停留天数"
+                subtitle="比特币价格在 1 万美元以上各 1 万美元区间的停留天数，一眼看懂价格都去过哪儿"
+                action={
+                  <ToggleButtonGroup
+                    size="small"
+                    exclusive
+                    value={bandMode}
+                    onChange={handleBandMode}
+                    aria-label="展示方式切换"
+                    sx={{ bgcolor: 'background.paper', borderRadius: 2.5, '& .MuiToggleButton-root': { borderRadius: '10px !important', px: 1.5, py: 0.4, fontWeight: 700, fontSize: '0.75rem' } }}
+                  >
+                    <ToggleButton value="bar" aria-label="条形图视图">条形</ToggleButton>
+                    <ToggleButton value="card" aria-label="卡片视图">卡片</ToggleButton>
+                  </ToggleButtonGroup>
+                }
+              >
+                {loading && data.length === 0 ? (
+                  bandMode === 'card' ? (
+                    <Box sx={{ display: 'grid', gap: { xs: 1.5, sm: 2 }, gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', xl: 'repeat(5, 1fr)' } }}>
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <Skeleton key={i} variant="rounded" height={124} sx={{ borderRadius: 3 }} />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Box sx={{ display: 'grid', gap: 1 }}>
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <Skeleton key={i} variant="rounded" height={22} sx={{ borderRadius: 1.5 }} />
+                      ))}
+                    </Box>
+                  )
+                ) : (
+                  <PriceBandChart
+                    stats={priceBandStats}
+                    currentPrice={currentPrice}
+                    startDate={data.length ? data[0].date : ''}
+                    latestDate={data.length ? data[data.length - 1].date : ''}
+                    mode={bandMode}
+                  />
+                )}
               </Section>
             </>
           )}

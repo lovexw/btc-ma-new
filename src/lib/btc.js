@@ -81,10 +81,10 @@ export function getDailyChange(series) {
 }
 
 /**
- * 历年定投回测：以最新数据日为基准，计算 2017 年起每年同日买入、
+ * 历年定投回测：以最新数据日为基准，计算 2016 年起每年同日买入、
  * 持有到现在的收益率。同日无数据时最多向前找 3 天。
  */
-export function getYearlyInvestmentReturns(data, priceMap, startYear = 2017) {
+export function getYearlyInvestmentReturns(data, priceMap, startYear = 2016) {
   if (!data.length) return [];
   const anchor = data[data.length - 1];
   const anchorYear = Number(anchor.date.slice(0, 4));
@@ -115,6 +115,59 @@ export function getYearlyInvestmentReturns(data, priceMap, startYear = 2017) {
     }
   }
   return results.reverse();
+}
+
+/** 价格区间步长：1 万美元。 */
+export const PRICE_BAND_STEP = 10000;
+
+/** 价格区间标签：0 → "1万以下"，1 → "1–2万"，12 → "12–13万"。 */
+export function formatBandLabel(index) {
+  if (index <= 0) return '1万以下';
+  return `${index}–${index + 1}万`;
+}
+
+/**
+ * 价格区间停留天数：按每日价格落入的 1 万美元区间分组计数。
+ * minPrice 以下的区间不计入展示（如 1 万美元以下），
+ * 天数与占比均基于纳入统计的日期计算；区间上限自动扩展到数据最高价所在区间。
+ */
+export function getPriceBandStats(data, step = PRICE_BAND_STEP, { minPrice = 0 } = {}) {
+  if (!data.length) return [];
+
+  let maxPrice = 0;
+  for (const row of data) {
+    if (row.price > maxPrice) maxPrice = row.price;
+  }
+
+  const firstBand = Math.max(0, Math.floor(minPrice / step));
+  const counts = new Map();
+  const firstSeen = {};
+  const lastSeen = {};
+  let total = 0;
+  for (const row of data) {
+    const idx = Math.floor(row.price / step);
+    if (idx < firstBand) continue;
+    total += 1;
+    counts.set(idx, (counts.get(idx) ?? 0) + 1);
+    if (firstSeen[idx] == null) firstSeen[idx] = row.date;
+    lastSeen[idx] = row.date;
+  }
+
+  const stats = [];
+  for (let index = firstBand; index <= Math.floor(maxPrice / step); index++) {
+    const days = counts.get(index) ?? 0;
+    stats.push({
+      index,
+      label: formatBandLabel(index),
+      low: index * step,
+      high: (index + 1) * step,
+      days,
+      share: total ? (days / total) * 100 : 0,
+      firstDate: firstSeen[index] ?? null,
+      lastDate: lastSeen[index] ?? null
+    });
+  }
+  return stats;
 }
 
 export function formatUsd(value, { decimals } = {}) {
