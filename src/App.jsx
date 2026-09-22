@@ -17,6 +17,7 @@ import {
   MA_DAYS,
   MA_COLORS,
   PRICE_BAND_STEP,
+  buildAhr999Map,
   buildPriceMap,
   computeMovingAverages,
   getDailyChange,
@@ -65,7 +66,11 @@ const App = () => {
 
   const mas = useMemo(() => (data.length ? computeMovingAverages(data) : null), [data]);
   const priceMap = useMemo(() => buildPriceMap(data), [data]);
-  const yearlyReturns = useMemo(() => getYearlyInvestmentReturns(data, priceMap), [data, priceMap]);
+  const ahr999Map = useMemo(() => buildAhr999Map(data), [data]);
+  const yearlyReturns = useMemo(
+    () => getYearlyInvestmentReturns(data, priceMap, 2016, ahr999Map),
+    [data, priceMap, ahr999Map]
+  );
   // 只统计 1 万美元以上区间，占比基于纳入统计的天数计算
   const priceBandStats = useMemo(
     () => getPriceBandStats(data, PRICE_BAND_STEP, { minPrice: PRICE_BAND_STEP }),
@@ -146,7 +151,7 @@ const App = () => {
                 </Box>
               </Section>
 
-              <Section title="历年定投回测" subtitle={`假设自 2016 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）`}>
+              <Section title="历年定投回测" subtitle={`假设自 2016 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）；AHR999 为买入当日指数，< 0.45 抄底、0.45 ~ 1.2 定投、> 1.2 等待起飞`}>
                 <Box
                   sx={{
                     display: 'grid',

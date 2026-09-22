@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Card, CardContent, Chip, Typography } from '@mui/material';
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
-import { formatPercent, formatUsd } from '../lib/btc';
+import { formatAhr999, formatPercent, formatUsd, getAhr999Zone } from '../lib/btc';
 
 export default function YearlyReturnCard({ item }) {
   return (
@@ -31,6 +31,17 @@ export default function YearlyReturnCard({ item }) {
         <Typography variant="caption" component="div" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
           买入价 {formatUsd(item.buyPrice)}
         </Typography>
+        <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
+            AHR999
+          </Typography>
+          <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.7rem', color: getAhr999Zone(item.ahr999).color }}>
+            {formatAhr999(item.ahr999)}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
+            {getAhr999Zone(item.ahr999).label}
+          </Typography>
+        </Box>
         <Box sx={{ mt: 0.75, pt: 0.75, borderTop: '1px dashed', borderColor: 'divider', display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
           <Typography
             variant="caption"

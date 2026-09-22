@@ -27,6 +27,16 @@ export default function Footer() {
           >
             下载数据 (CSV)
           </Box>
+          ·
+          <Box
+            component="a"
+            href="https://github.com/lovexw/btc-ma-new"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: 'text.secondary', textDecoration: 'underline', textUnderlineOffset: 2, mx: 0.5 }}
+          >
+            GitHub 仓库
+          </Box>
         </Typography>
       </Container>
     </Box>

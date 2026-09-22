@@ -80,11 +80,62 @@ export function getDailyChange(series) {
   return ((cur - prev) / prev) * 100;
 }
 
+/** AHR999 指数参数：币龄基准日（创世区块）与对数拟合常数（九神《囤比特币》原文）。 */
+const AHR999_EPOCH_MS = Date.UTC(2009, 0, 3);
+const AHR999_FIT_SLOPE = 5.84;
+const AHR999_FIT_INTERCEPT = -17.01;
+const AHR999_DCA_DAYS = 200;
+
+/**
+ * AHR999 指数序列：ahr999 =（价格 / 200日定投成本）×（价格 / 指数增长估值）。
+ * 200日定投成本取最近 200 日价格的几何平均，指数增长估值 = 10^(5.84·log10(币龄) − 17.01)。
+ * 窗口未填满时为 null。
+ */
+export function computeAhr999Series(data) {
+  const n = data.length;
+  const logCum = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) logCum[i + 1] = logCum[i] + Math.log(data[i].price);
+
+  const result = new Array(n).fill(null);
+  for (let i = AHR999_DCA_DAYS - 1; i < n; i++) {
+    const geoMean = Math.exp((logCum[i + 1] - logCum[i + 1 - AHR999_DCA_DAYS]) / AHR999_DCA_DAYS);
+    const coinAgeDays = Math.round((Date.parse(`${data[i].date}T00:00:00Z`) - AHR999_EPOCH_MS) / 86400000);
+    if (coinAgeDays <= 0) continue;
+    const fitted = Math.pow(10, AHR999_FIT_SLOPE * Math.log10(coinAgeDays) + AHR999_FIT_INTERCEPT);
+    result[i] = (data[i].price / geoMean) * (data[i].price / fitted);
+  }
+  return result;
+}
+
+/** 日期 → AHR999 指数映射。 */
+export function buildAhr999Map(data) {
+  const series = computeAhr999Series(data);
+  const map = new Map();
+  for (let i = 0; i < data.length; i++) map.set(data[i].date, series[i]);
+  return map;
+}
+
+export function formatAhr999(value) {
+  if (value == null || !Number.isFinite(value)) return '—';
+  return value.toFixed(2);
+}
+
+/**
+ * AHR999 区间：< 0.45 抄底区，0.45 ~ 1.2 定投区，> 1.2 等待起飞。
+ */
+export function getAhr999Zone(value) {
+  if (value == null || !Number.isFinite(value)) return { label: '', color: 'text.secondary' };
+  if (value < 0.45) return { label: '抄底区', color: 'success.main' };
+  if (value <= 1.2) return { label: '定投区', color: 'primary.main' };
+  return { label: '等待起飞', color: 'warning.main' };
+}
+
 /**
  * 历年定投回测：以最新数据日为基准，计算 2016 年起每年同日买入、
  * 持有到现在的收益率。同日无数据时最多向前找 3 天。
+ * 传入 ahr999Map 时同时给出买入日的 AHR999 指数。
  */
-export function getYearlyInvestmentReturns(data, priceMap, startYear = 2016) {
+export function getYearlyInvestmentReturns(data, priceMap, startYear = 2016, ahr999Map = null) {
   if (!data.length) return [];
   const anchor = data[data.length - 1];
   const anchorYear = Number(anchor.date.slice(0, 4));
@@ -110,6 +161,7 @@ export function getYearlyInvestmentReturns(data, priceMap, startYear = 2016) {
         buyPrice,
         currentPrice: anchor.price,
         returnRate,
+        ahr999: ahr999Map ? ahr999Map.get(targetDate) ?? null : null,
         isPositive: returnRate >= 0
       });
     }
