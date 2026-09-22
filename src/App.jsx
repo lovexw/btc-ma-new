@@ -120,7 +120,7 @@ const App = () => {
             </Alert>
           ) : (
             <>
-              <Hero data={data} loading={loading} />
+              <Hero data={data} loading={loading} ahr999={data.length ? ahr999Map.get(data[data.length - 1].date) : null} />
 
               <Section title="价格与均线走势" subtitle="拖动或双指缩放查看不同时间范围，点击均线开关控制显示">
                 <PriceChart data={data} mas={mas} maVisible={maVisible} />

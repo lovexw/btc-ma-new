@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Card, CardContent, Skeleton, Stack, Typography } from '@mui/material';
 import CurrencyBitcoinRoundedIcon from '@mui/icons-material/CurrencyBitcoinRounded';
-import { formatUsd } from '../lib/btc';
+import { formatAhr999, formatUsd, getAhr999Zone } from '../lib/btc';
 
 const StatItem = ({ label, value, loading, valueSx, sx }) => (
   <Box sx={{ minWidth: 0, ...sx }}>
@@ -18,9 +18,10 @@ const StatItem = ({ label, value, loading, valueSx, sx }) => (
   </Box>
 );
 
-export default function Hero({ data, loading }) {
+export default function Hero({ data, loading, ahr999 }) {
   const latest = data.length ? data[data.length - 1] : null;
   const earliest = data.length ? data[0] : null;
+  const zone = getAhr999Zone(ahr999);
 
   return (
     <Card sx={{ overflow: 'hidden' }}>
@@ -64,6 +65,32 @@ export default function Hero({ data, loading }) {
             valueSx={{ color: 'primary.main', fontSize: { xs: '1.45rem', sm: '1.8rem' } }}
           />
           <StatItem label="最新日期" value={latest?.date ?? '—'} loading={loading} />
+          <StatItem
+            label="AHR999 指数"
+            loading={loading}
+            value={
+              <>
+                {formatAhr999(ahr999)}
+                <Box
+                  component="span"
+                  sx={{
+                    ml: 1,
+                    px: 0.75,
+                    py: 0.15,
+                    borderRadius: 1,
+                    verticalAlign: 'middle',
+                    fontWeight: 700,
+                    fontSize: { xs: '0.65rem', sm: '0.72rem' },
+                    bgcolor: zone.color === 'error.main' ? 'rgba(198, 40, 40, 0.08)' : zone.color === 'primary.main' ? 'rgba(255, 153, 0, 0.10)' : 'rgba(46, 125, 50, 0.08)',
+                    color: zone.color
+                  }}
+                >
+                  {zone.label}
+                </Box>
+              </>
+            }
+            valueSx={{ color: zone.color }}
+          />
           <StatItem
             label="历史数据"
             value={loading ? undefined : `${data.length.toLocaleString('en-US')} 天`}
