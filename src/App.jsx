@@ -151,7 +151,7 @@ const App = () => {
                 </Box>
               </Section>
 
-              <Section title="历年定投回测" subtitle={`假设自 2016 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）；AHR999 为买入当日指数，< 0.45 抄底、0.45 ~ 1.2 定投、> 1.2 等待起飞`}>
+              <Section title="历年定投回测" subtitle={`假设自 2016 年起，每年在今日买入并持有至今（以最新数据日 ${data.length ? data[data.length - 1].date : ''} 为基准）；AHR999 为买入当日指数，≤ 0.35 绝佳抄底、0.35 ~ 0.45 抄底定投、0.45 ~ 1.2 正常定投、> 1.2 谨慎止盈`}>
                 <Box
                   sx={{
                     display: 'grid',

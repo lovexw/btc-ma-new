@@ -121,13 +121,15 @@ export function formatAhr999(value) {
 }
 
 /**
- * AHR999 区间：< 0.45 抄底区，0.45 ~ 1.2 定投区，> 1.2 等待起飞。
+ * AHR999 区间：≤ 0.35 绝佳抄底，0.35 ~ 0.45 抄底定投，
+ * 0.45 ~ 1.2 正常定投，> 1.2 谨慎止盈。
  */
 export function getAhr999Zone(value) {
   if (value == null || !Number.isFinite(value)) return { label: '', color: 'text.secondary' };
-  if (value < 0.45) return { label: '抄底区', color: 'success.main' };
-  if (value <= 1.2) return { label: '定投区', color: 'primary.main' };
-  return { label: '等待起飞', color: 'warning.main' };
+  if (value <= 0.35) return { label: '绝佳抄底', color: 'success.main' };
+  if (value < 0.45) return { label: '抄底定投', color: 'success.light' };
+  if (value <= 1.2) return { label: '正常定投', color: 'primary.main' };
+  return { label: '谨慎止盈', color: 'error.main' };
 }
 
 /**
