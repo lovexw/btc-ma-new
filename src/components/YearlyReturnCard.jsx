@@ -28,9 +28,14 @@ export default function YearlyReturnCard({ item }) {
           />
         </Box>
 
-        <Typography variant="caption" component="div" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-          买入价 {formatUsd(item.buyPrice)}
-        </Typography>
+        <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'baseline', gap: 0.75 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+            买入价
+          </Typography>
+          <Typography sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1.05rem', lineHeight: 1.2 }}>
+            {formatUsd(item.buyPrice)}
+          </Typography>
+        </Box>
         <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
           <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
             AHR999
