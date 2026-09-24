@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { ACCENT } from '../lib/btc';
+import { ACCENT, PRICE_BAND_STEP } from '../lib/btc';
 import PriceBandCards from './PriceBandCards';
 
 const formatDays = (days) => days.toLocaleString('en-US');
@@ -102,10 +102,10 @@ function BandBars({ stats, currentBand }) {
 }
 
 /**
- * 比特币价格停留天数：按 1 万美元区间统计每日价格分布。
+ * 比特币价格停留天数：按 step 美元区间（1 万或 5 千）统计每日价格分布。
  * mode = 'bar' 为横向条形图，'card' 为卡片网格，两种视图共用同一份统计数据。
  */
-export default function PriceBandChart({ stats, currentPrice, latestDate, startDate, mode = 'bar' }) {
+export default function PriceBandChart({ stats, currentPrice, latestDate, startDate, mode = 'bar', step = PRICE_BAND_STEP }) {
   const currentBand = useMemo(() => {
     if (currentPrice == null) return -1;
     const found = stats.find((s) => currentPrice >= s.low && currentPrice < s.high);
@@ -129,7 +129,7 @@ export default function PriceBandChart({ stats, currentPrice, latestDate, startD
       )}
 
       <Typography variant="caption" component="p" sx={{ color: 'text.secondary', mt: 1.5, px: 0.25, fontSize: '0.7rem', lineHeight: 1.6 }}>
-        共 {formatDays(totalDays)} 天价格在 1 万美元以上（{startDate} ~ {latestDate}），区间宽 1 万美元，占比为各区间天数之比
+        共 {formatDays(totalDays)} 天价格在 {step === PRICE_BAND_STEP ? '1 万' : '5 千'}美元以上（{startDate} ~ {latestDate}），区间宽 {step === PRICE_BAND_STEP ? '1 万' : '5 千'}美元，占比为各区间天数之比
         {mode === 'card' ? '；卡片内为该区间首次进入与最近出现的日期。' : '；悬停条形可查看首次进入日期。'}
       </Typography>
     </>

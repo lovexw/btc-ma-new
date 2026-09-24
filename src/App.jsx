@@ -17,6 +17,7 @@ import {
   MA_DAYS,
   MA_COLORS,
   PRICE_BAND_STEP,
+  PRICE_BAND_STEP_SMALL,
   buildAhr999Map,
   buildPriceMap,
   computeMovingAverages,
@@ -63,6 +64,7 @@ const App = () => {
   const { data, loading, error, retry } = useBtcData();
   const [maVisible, setMaVisible] = useState(() => Object.fromEntries(MA_DAYS.map((day) => [day, true])));
   const [bandMode, setBandMode] = useState('bar');
+  const [bandStep, setBandStep] = useState(PRICE_BAND_STEP);
 
   const mas = useMemo(() => (data.length ? computeMovingAverages(data) : null), [data]);
   const priceMap = useMemo(() => buildPriceMap(data), [data]);
@@ -71,10 +73,10 @@ const App = () => {
     () => getYearlyInvestmentReturns(data, priceMap, 2016, ahr999Map),
     [data, priceMap, ahr999Map]
   );
-  // 只统计 1 万美元以上区间，占比基于纳入统计的天数计算
+  // 只统计区间宽度以上（minPrice）的区间，占比基于纳入统计的天数计算
   const priceBandStats = useMemo(
-    () => getPriceBandStats(data, PRICE_BAND_STEP, { minPrice: PRICE_BAND_STEP }),
-    [data]
+    () => getPriceBandStats(data, bandStep, { minPrice: bandStep }),
+    [data, bandStep]
   );
 
   const currentPrice = data.length ? data[data.length - 1].price : null;
@@ -89,6 +91,10 @@ const App = () => {
 
   const handleBandMode = useCallback((_, value) => {
     if (value) setBandMode(value);
+  }, []);
+
+  const handleBandStep = useCallback((_, value) => {
+    if (value) setBandStep(value);
   }, []);
 
   return (
@@ -169,19 +175,32 @@ const App = () => {
 
               <Section
                 title="价格区间停留天数"
-                subtitle="比特币价格在 1 万美元以上各 1 万美元区间的停留天数，一眼看懂价格都去过哪儿"
+                subtitle={`比特币价格在 ${bandStep === PRICE_BAND_STEP ? '1 万' : '5 千'}美元以上各 ${bandStep === PRICE_BAND_STEP ? '1 万美元' : '5 千美元'}区间的停留天数，一眼看懂价格都去过哪儿`}
                 action={
-                  <ToggleButtonGroup
-                    size="small"
-                    exclusive
-                    value={bandMode}
-                    onChange={handleBandMode}
-                    aria-label="展示方式切换"
-                    sx={{ bgcolor: 'background.paper', borderRadius: 2.5, '& .MuiToggleButton-root': { borderRadius: '10px !important', px: 1.5, py: 0.4, fontWeight: 700, fontSize: '0.75rem' } }}
-                  >
-                    <ToggleButton value="bar" aria-label="条形图视图">条形</ToggleButton>
-                    <ToggleButton value="card" aria-label="卡片视图">卡片</ToggleButton>
-                  </ToggleButtonGroup>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <ToggleButtonGroup
+                      size="small"
+                      exclusive
+                      value={bandStep}
+                      onChange={handleBandStep}
+                      aria-label="区间宽度切换"
+                      sx={{ bgcolor: 'background.paper', borderRadius: 2.5, '& .MuiToggleButton-root': { borderRadius: '10px !important', px: 1.5, py: 0.4, fontWeight: 700, fontSize: '0.75rem' } }}
+                    >
+                      <ToggleButton value={PRICE_BAND_STEP} aria-label="1 万美元区间">1万区间</ToggleButton>
+                      <ToggleButton value={PRICE_BAND_STEP_SMALL} aria-label="5 千美元区间">5千区间</ToggleButton>
+                    </ToggleButtonGroup>
+                    <ToggleButtonGroup
+                      size="small"
+                      exclusive
+                      value={bandMode}
+                      onChange={handleBandMode}
+                      aria-label="展示方式切换"
+                      sx={{ bgcolor: 'background.paper', borderRadius: 2.5, '& .MuiToggleButton-root': { borderRadius: '10px !important', px: 1.5, py: 0.4, fontWeight: 700, fontSize: '0.75rem' } }}
+                    >
+                      <ToggleButton value="bar" aria-label="条形图视图">条形</ToggleButton>
+                      <ToggleButton value="card" aria-label="卡片视图">卡片</ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
                 }
               >
                 {loading && data.length === 0 ? (
@@ -205,6 +224,7 @@ const App = () => {
                     startDate={data.length ? data[0].date : ''}
                     latestDate={data.length ? data[data.length - 1].date : ''}
                     mode={bandMode}
+                    step={bandStep}
                   />
                 )}
               </Section>
